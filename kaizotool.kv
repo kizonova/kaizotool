@@ -1,0 +1,73 @@
+#:kivy 2.0.0
+
+<MyApp>:
+    orientation: 'vertical'
+
+    Image:
+        source: 'images/kaizotoool.png'  # Path to kaizotoool.png
+        size_hint: 1, 0.2  # Adjust the size as needed
+
+    Label:
+        text: "Welcome to Kaizo Tool!\nJoin our Telegram channel at t.me/kaizonova and our YouTube channel at youtube.com/kaizonova"
+        font_size: '18sp'
+        size_hint_y: None
+        height: '80dp'
+
+    Label:
+        id: output_label
+        text: ''
+        font_size: '16sp'
+        halign: 'left'
+        valign: 'middle'
+        size_hint_y: None
+        height: '60dp'
+
+    ScrollView:
+        Label:
+            id: result_label
+            text: ''
+            font_size: '16sp'
+            size_hint_y: None
+            height: self.texture_size[1]
+            text_size: self.width, None
+            halign: 'left'
+            valign: 'top'
+
+    Label:
+        id: status_label
+        text: ''
+        size_hint_y: None
+        height: '30dp'
+
+    GridLayout:
+        cols: 2
+        size_hint_y: None
+        height: '40dp'
+
+        Button:
+            text: "Find host IP from host name"
+            on_release: root.find_host_ip_from_host_name()
+
+        Button:
+            text: "Find host from IP address"
+            on_release: root.find_host_from_ip_address()
+
+        Button:
+            text: "Find reverse hosts in a range"
+            on_release: root.reverse_hosts_in_range()
+
+        Button:
+            text: "Scan open ports for a specific host"
+            on_release: root.scan_open_ports()
+
+        Button:
+            text: "Join us (Telegram and YouTube)"
+            on_release: root.join_us()
+
+        Button:
+            text: "About APK"
+            on_release: root.about_apk()
+
+    Button:
+        text: "Exit"
+        on_release: root.stop()
