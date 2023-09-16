@@ -9,56 +9,74 @@ package.name = kaizotool
 # (str) Package domain (needed for android/ios packaging)
 package.domain = org.kaizotool
 
-# (str) Source code where the main.py live
+# (str) Source code where the main.py lives
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
 source.include_exts = py,png,jpg,kv,atlas
 
-# (str) Application versioning (method 1)
+# (str) Application version
 version = 1.0
 
 # (list) Application requirements
 requirements = python3,kivy,kivymd,Pillow
 
-# (str) Custom source folders ( separate with commas )
-source.pkgs = lib/py
+# (bool) Use precompiled python packages
+source.include_patterns = assets/*,images/*.png
 
-# (list) Garden requirements (kivy garden flowers)
-#garden_requirements =
-
-# (str) Presplash of the application
-#presplash.filename = %(source.dir)s/data/presplash.png
-
-# (str) Icon of the application
+# (str) Application icon
 icon.filename = %(source.dir)s/kaizo.png
 
-# (bool) Indicate if the application should be fullscreen or not
+# (str) Application presplash
+presplash.filename = %(source.dir)s/kaizonova.png
+
+# (str) Supported orientations (landscape, portrait or all)
+orientation = portrait
+
+# (bool) Fullscreen (hide status bar)
 fullscreen = 0
 
-# (string) Permissions
+# (str) Permissions
 android.permissions = INTERNET,WRITE_EXTERNAL_STORAGE
 
-# (int) Target Android API, should be as high as possible.
-android.api = 29
+# (int) Android API to use
+android.api = 30
 
-# (int) Minimum Android API
+# (int) Android min API
 android.minapi = 21
 
-# (int) Android SDK version to use
-android.sdk = 29
+# (int) Android architecture (armeabi-v7a, arm64-v8a, x86, x86_64)
+android.arch = arm64-v8a
 
-# (str) Android NDK version to use
-#android.ndk = 19b
+# (int) Android NDK version to use
+android.ndk = 19b
 
-# (int) Android NDK API to use. This is the minimum API your app will work on.
-#android.ndk_api = 21
+# (bool) Android App Bundle (aab) - This should be False for APK
+android.aab = False
 
-# (bool) Use --private data storage (True) or --dir public storage (False)
-#android.private_storage = True
+# (list) List of Java .jar files to add to the libs so that pyjnius can access
+android.add_jars = jars/path/to/your/jar/file.jar
 
-# (str) Android NDK directory (if empty, it will be automatically downloaded.)
-#android.ndk_path =
+# (list) List of Java files to add to the android project (can be java or a directory containing the files)
+android.add_src = src/path/to/your/java/files
 
-# (str) Android SDK directory (if empty, it will be automatically downloaded.)
-#android.sdk_path =
+# (bool) Log printout (default False)
+log_level = 2
+
+# (bool) Remove the .pyc files
+remove_pyc = 1
+
+# (str) Python for android directory (this should contain the Android NDK)
+android.ndk_path = ~/path/to/your/android/ndk
+
+# (str) Android SDK version to use
+android.sdk = 24
+
+# (str) Android Gradle dependencies
+android.gradle_dependencies = 'com.android.support:support-compat:27.1.1'
+
+# (str) Android Gradle dependencies to add to compile
+android.gradle_dependencies_add = 'implementation "com.android.support:appcompat-v7:27.1.1"'
+
+# (str) Android Gradle dependencies to add to compile
+android.gradle_dependencies_add = 'implementation "com.android.support:appcompat-v7:27.1.1"'
