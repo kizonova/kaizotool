@@ -1,7 +1,8 @@
-import socket
 import threading
+import socket
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.filechooser import FileChooserListView
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
@@ -9,46 +10,27 @@ from kivy.uix.popup import Popup
 from kivy.uix.progressbar import ProgressBar
 from kivy.clock import Clock
 from kivy.core.clipboard import Clipboard
-from kivy.uix.image import Image  # Import the Image widget for loading images
 
 class MyApp(App):
     def build(self):
         # Create a main layout
         self.layout = BoxLayout(orientation='vertical')
 
-        # Create an image widget
-        image_widget = Image(source='images/kaizotoool.png')  # Path to kaizotoool.png
-        image_widget.size_hint = (1, 0.2)
-        self.layout.add_widget(image_widget)
-
         # Create a label for welcome message
         welcome_label = Label(
             text="Welcome to Kaizo Tool!\nJoin our Telegram channel at t.me/kaizonova and our YouTube channel at youtube.com/kaizonova")
-        welcome_label.font_size = '18sp'
-        welcome_label.size_hint_y = None
-        welcome_label.height = '80dp'
         self.layout.add_widget(welcome_label)
 
         # Create a label to display the output
-        self.output_label = Label(id='output_label', text='', font_size='16sp', halign='left', valign='middle')
-        self.output_label.size_hint_y = None
-        self.output_label.height = '60dp'
+        self.output_label = Label()
         self.layout.add_widget(self.output_label)
-
-        # Create a ScrollView with a Label inside
-        scroll_view = ScrollView()
-        self.result_label = Label(id='result_label', text='', font_size='16sp', halign='left', valign='top')
-        self.result_label.text_size = (None, None)
-        self.result_label.size_hint = (None, None)
-        scroll_view.add_widget(self.result_label)
-        self.layout.add_widget(scroll_view)
-
-        # Create status Label
-        self.status_label = Label(id='status_label', text='', size_hint_y=None, height='30dp')
-        self.layout.add_widget(self.status_label)
 
         # Create buttons for different options
         self.create_buttons()
+
+        # Create a label to display status while a task is running
+        self.status_label = Label(text="", size_hint=(1, None), height=30)
+        self.layout.add_widget(self.status_label)
 
         return self.layout
 
@@ -255,7 +237,7 @@ class MyApp(App):
         self.display_output(about_text)
 
     def display_result(self, text):
-        self.result_label.text = text
+        self.output_label.text = text
 
     def ask_save_copy_result(self, result):
         layout = BoxLayout(orientation='vertical')
