@@ -1,8 +1,7 @@
-import threading
 import socket
+import threading
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.filechooser import FileChooserListView
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
@@ -10,32 +9,47 @@ from kivy.uix.popup import Popup
 from kivy.uix.progressbar import ProgressBar
 from kivy.clock import Clock
 from kivy.core.clipboard import Clipboard
+from kivy.utils import get_color_from_hex
 
-class MyApp(App):
+from kivymd.app import MDApp
+from kivymd.uix.textfield import MDTextField
+from kivymd.uix.button import MDRaisedButton
+from kivymd.uix.label import MDLabel
+from kivymd.uix.dialog import MDDialog
+from kivymd.uix.filemanager import MDFileManager
+
+class KaizoToolApp(MDApp):
     def build(self):
-        # Create a main layout
-        self.layout = BoxLayout(orientation='vertical')
+        self.theme_cls.theme_style = "Dark"  # Set the dark theme
 
-        # Create a label for welcome message
-        welcome_label = Label(
-            text="Welcome to Kaizo Tool!\nJoin our Telegram channel at t.me/kaizonova and our YouTube channel at youtube.com/kaizonova")
+        self.layout = BoxLayout(orientation='vertical', spacing=10)
+        self.layout.background_color = get_color_from_hex("#121212")  # Dark mode background color
+
+        welcome_label = MDLabel(
+            text="Welcome to Kaizo Tool!\nJoin our Telegram channel at t.me/kaizonova and our YouTube channel at youtube.com/kaizonova",
+            halign='center',
+            theme_text_color="Secondary"
+        )
         self.layout.add_widget(welcome_label)
 
-        # Create a label to display the output
-        self.output_label = Label()
+        self.output_label = MDLabel(
+            theme_text_color="Primary"
+        )
         self.layout.add_widget(self.output_label)
 
-        # Create buttons for different options
         self.create_buttons()
 
-        # Create a label to display status while a task is running
-        self.status_label = Label(text="", size_hint=(1, None), height=30)
+        self.status_label = MDLabel(
+            text="",
+            size_hint_y=None,
+            height=30,
+            theme_text_color="Secondary"
+        )
         self.layout.add_widget(self.status_label)
 
         return self.layout
 
     def create_buttons(self):
-        # Create buttons for different options
         options = [
             ("Find host IP from host name", self.find_host_ip_from_host_name),
             ("Find host from IP address", self.find_host_from_ip_address),
@@ -46,8 +60,11 @@ class MyApp(App):
         ]
 
         for option, function in options:
-            button = Button(text=option)
-            button.bind(on_press=function)
+            button = MDRaisedButton(
+                text=option,
+                theme_text_color="Secondary",
+            )
+            button.bind(on_release=function)  # Use on_release for KivyMD buttons
             self.layout.add_widget(button)
 
     def display_output(self, text):
@@ -58,10 +75,21 @@ class MyApp(App):
 
     def find_host_ip_from_host_name(self, instance):
         layout = BoxLayout(orientation='vertical')
-        popup = Popup(title='Find Host IP from Host Name', content=layout, size_hint=(None, None), size=(400, 200))
+        popup = MDDialog(
+            title='Find Host IP from Host Name',
+            content=layout,
+            size_hint=(None, None),
+            size=(400, 200),
+            background_color=get_color_from_hex("#212121")  # Dark mode dialog background color
+        )
 
-        host_name_input = TextInput(hint_text='Enter the host name')
-        result_label = Label()
+        host_name_input = MDTextField(
+            hint_text='Enter the host name',
+            mode="fill",
+        )
+        result_label = MDLabel(
+            theme_text_color="Primary"
+        )
 
         layout.add_widget(host_name_input)
         layout.add_widget(result_label)
@@ -72,25 +100,39 @@ class MyApp(App):
             try:
                 ip_address = socket.gethostbyname(host_name)
                 result_label.text = f'IP address for host {host_name}: {ip_address}'
-                self.display_result(f'IP address for host {host_name}: {ip_address}')
+                self.display_output(f'IP address for host {host_name}: {ip_address}')
                 self.ask_save_copy_result(result_label.text)
             except socket.gaierror:
                 result_label.text = 'Host not found.'
-                self.display_result('Host not found.')
+                self.display_output('Host not found.')
             self.set_status("")  # Clear the status message after the task completes
 
-        find_button = Button(text='Find IP')
-        find_button.bind(on_press=find_ip)
+        find_button = MDRaisedButton(
+            text='Find IP',
+            theme_text_color="Secondary",
+        )
+        find_button.bind(on_release=find_ip)  # Use on_release for KivyMD buttons
         layout.add_widget(find_button)
 
         popup.open()
 
     def find_host_from_ip_address(self, instance):
         layout = BoxLayout(orientation='vertical')
-        popup = Popup(title='Find Host from IP Address', content=layout, size_hint=(None, None), size=(400, 200))
+        popup = MDDialog(
+            title='Find Host from IP Address',
+            content=layout,
+            size_hint=(None, None),
+            size=(400, 200),
+            background_color=get_color_from_hex("#212121")  # Dark mode dialog background color
+        )
 
-        ip_address_input = TextInput(hint_text='Enter the IP address')
-        result_label = Label()
+        ip_address_input = MDTextField(
+            hint_text='Enter the IP address',
+            mode="fill",
+        )
+        result_label = MDLabel(
+            theme_text_color="Primary"
+        )
 
         layout.add_widget(ip_address_input)
         layout.add_widget(result_label)
@@ -101,25 +143,39 @@ class MyApp(App):
             try:
                 host_name, _, _ = socket.gethostbyaddr(ip_address)
                 result_label.text = f'Host name for IP {ip_address}: {host_name}'
-                self.display_result(f'Host name for IP {ip_address}: {host_name}')
+                self.display_output(f'Host name for IP {ip_address}: {host_name}')
                 self.ask_save_copy_result(result_label.text)
             except Exception:
                 result_label.text = 'Host not found.'
-                self.display_result('Host not found.')
+                self.display_output('Host not found.')
             self.set_status("")  # Clear the status message after the task completes
 
-        find_button = Button(text='Find Host')
-        find_button.bind(on_press=find_host)
+        find_button = MDRaisedButton(
+            text='Find Host',
+            theme_text_color="Secondary",
+        )
+        find_button.bind(on_release=find_host)  # Use on_release for KivyMD buttons
         layout.add_widget(find_button)
 
         popup.open()
 
     def reverse_hosts_in_range(self, instance):
         layout = BoxLayout(orientation='vertical')
-        popup = Popup(title='Reverse Hosts in a Range', content=layout, size_hint=(None, None), size=(400, 200))
+        popup = MDDialog(
+            title='Reverse Hosts in a Range',
+            content=layout,
+            size_hint=(None, None),
+            size=(400, 200),
+            background_color=get_color_from_hex("#212121")  # Dark mode dialog background color
+        )
 
-        ip_range_input = TextInput(hint_text='Enter the IP range (e.g., 192.168.1.)')
-        result_label = Label()
+        ip_range_input = MDTextField(
+            hint_text='Enter the IP range (e.g., 192.168.1.)',
+            mode="fill",
+        )
+        result_label = MDLabel(
+            theme_text_color="Primary"
+        )
 
         layout.add_widget(ip_range_input)
         layout.add_widget(result_label)
@@ -141,27 +197,48 @@ class MyApp(App):
 
             if hostnames:
                 result_label.text = f'Reverse hosts in range {ip_range}:\n' + '\n'.join(hostnames)
-                self.display_result(f'Reverse hosts in range {ip_range}:\n' + '\n'.join(hostnames))
+                self.display_output(f'Reverse hosts in range {ip_range}:\n' + '\n'.join(hostnames))
                 self.ask_save_copy_result(result_label.text)
             else:
                 result_label.text = f'No reverse hosts found in range {ip_range}.'
-                self.display_result(f'No reverse hosts found in range {ip_range}.')
+                self.display_output(f'No reverse hosts found in range {ip_range}.')
             self.set_status("")  # Clear the status message after the task completes
 
-        find_button = Button(text='Find Reverse Hosts')
-        find_button.bind(on_press=reverse_hosts)
+        find_button = MDRaisedButton(
+            text='Find Reverse Hosts',
+            theme_text_color="Secondary",
+        )
+        find_button.bind(on_release=reverse_hosts)  # Use on_release for KivyMD buttons
         layout.add_widget(find_button)
 
         popup.open()
 
     def scan_open_ports(self, instance):
         layout = BoxLayout(orientation='vertical')
-        popup = Popup(title='Scan Open Ports', content=layout, size_hint=(None, None), size=(400, 250))
+        popup = MDDialog(
+            title='Scan Open Ports',
+            content=layout,
+            size_hint=(None, None),
+            size=(400, 250),
+            background_color=get_color_from_hex("#212121")  # Dark mode dialog background color
+        )
 
-        host_input = TextInput(hint_text='Enter the hostname or IP address')
-        protocol_input = TextInput(hint_text='Enter the protocol (e.g., TCP)')
-        progress_bar = ProgressBar(max=65535)
-        result_label = Label()
+        host_input = MDTextField(
+            hint_text='Enter the hostname or IP address',
+            mode="fill",
+        )
+        protocol_input = MDTextField(
+            hint_text='Enter the protocol (e.g., TCP)',
+            mode="fill",
+        )
+        progress_bar = ProgressBar(
+            max=65535,
+            size_hint=(1, None),
+            height=20
+        )
+        result_label = MDLabel(
+            theme_text_color="Primary"
+        )
 
         layout.add_widget(host_input)
         layout.add_widget(protocol_input)
@@ -193,12 +270,12 @@ class MyApp(App):
                     if open_ports:
                         result_label.text = f'The following {protocol} ports are open on {host}:\n' + ', '.join(
                             map(str, open_ports))
-                        self.display_result(
+                        self.display_output(
                             f'The following {protocol} ports are open on {host}:\n' + ', '.join(map(str, open_ports)))
                         self.ask_save_copy_result(result_label.text)
                     else:
                         result_label.text = f'No open {protocol} ports found on {host}.'
-                        self.display_result(f'No open {protocol} ports found on {host}.')
+                        self.display_output(f'No open {protocol} ports found on {host}.')
                     self.set_status("")  # Clear the status message after the task completes
 
             progress_bar.value = 0
@@ -206,8 +283,11 @@ class MyApp(App):
 
             threading.Thread(target=lambda: [check_port(port) for port in range(1, 65536)]).start()
 
-        find_button = Button(text='Scan Ports')
-        find_button.bind(on_press=scan_ports)
+        find_button = MDRaisedButton(
+            text='Scan Ports',
+            theme_text_color="Secondary",
+        )
+        find_button.bind(on_release=scan_ports)  # Use on_release for KivyMD buttons
         layout.add_widget(find_button)
 
         popup.open()
@@ -236,14 +316,23 @@ class MyApp(App):
         """
         self.display_output(about_text)
 
-    def display_result(self, text):
+    def display_output(self, text):
         self.output_label.text = text
 
     def ask_save_copy_result(self, result):
         layout = BoxLayout(orientation='vertical')
-        popup = Popup(title='Result', content=layout, size_hint=(None, None), size=(400, 250))
+        popup = MDDialog(
+            title='Result',
+            content=layout,
+            size_hint=(None, None),
+            size=(400, 250),
+            background_color=get_color_from_hex("#212121")  # Dark mode dialog background color
+        )
 
-        result_label = Label(text=result)
+        result_label = MDLabel(
+            text=result,
+            theme_text_color="Primary"
+        )
         layout.add_widget(result_label)
 
         def copy_result(instance):
@@ -251,30 +340,39 @@ class MyApp(App):
             popup.dismiss()
 
         def save_result(instance):
-            file_chooser = FileChooserListView()
-            layout.add_widget(file_chooser)
+            file_manager = MDFileManager(
+                exit_manager=self.exit_manager,
+                select_path=self.select_path,
+            )
+            file_manager.show('/')  # Show the file manager to select a save location
 
-            def save_to_file(file_path):
-                try:
-                    with open(file_path, 'w') as file:
-                        file.write(result)
-                    popup.dismiss()
-                except Exception as e:
-                    result_label.text = f'Error saving result: {str(e)}'
+        def exit_manager(self, *args):
+            pass
 
-            save_button = Button(text='Save to File')
-            save_button.bind(on_press=lambda instance: save_to_file(file_chooser.path))
-            layout.add_widget(save_button)
+        def select_path(self, path):
+            result_label.text = f'Saving result to: {path}'
+            try:
+                with open(path, 'w') as file:
+                    file.write(result)
+                popup.dismiss()
+            except Exception as e:
+                result_label.text = f'Error saving result: {str(e)}'
 
-        copy_button = Button(text='Copy to Clipboard')
-        copy_button.bind(on_press=copy_result)
+        copy_button = MDRaisedButton(
+            text='Copy to Clipboard',
+            theme_text_color="Secondary",
+        )
+        copy_button.bind(on_release=copy_result)  # Use on_release for KivyMD buttons
         layout.add_widget(copy_button)
 
-        save_button = Button(text='Save to File')
-        save_button.bind(on_press=save_result)
+        save_button = MDRaisedButton(
+            text='Save to File',
+            theme_text_color="Secondary",
+        )
+        save_button.bind(on_release=save_result)  # Use on_release for KivyMD buttons
         layout.add_widget(save_button)
 
         popup.open()
 
 if __name__ == "__main__":
-    MyApp().run()
+    KaizoToolApp().run()
